@@ -9,6 +9,24 @@ interface ATQRegistryItem {
   chainId: string;
 }
 
+interface GraphQLResponse {
+  data: {
+    litems: Array<{
+      itemID: string;
+      metadata: {
+        props: Array<{
+          type: string;
+          label: string;
+          value: string;
+        }>;
+      };
+    }>;
+  };
+  errors?: Array<{
+    message: string;
+  }>;
+}
+
 export default function Home() {
   const [data, setData] = useState<ATQRegistryItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -56,17 +74,17 @@ export default function Home() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const result = await response.json();
+      const result: GraphQLResponse = await response.json();
 
       if (result.errors) {
-        throw new Error(`GraphQL errors: ${result.errors.map((e: any) => e.message).join(', ')}`);
+        throw new Error(`GraphQL errors: ${result.errors.map((e) => e.message).join(', ')}`);
       }
 
       // Parse the response to extract the required fields
-      const parsedData: ATQRegistryItem[] = result.data.litems.map((item: any) => {
-        const url = item.metadata.props.find((prop: any) => prop.label === 'Github Repository URL')?.value || '';
-        const commit = item.metadata.props.find((prop: any) => prop.label === 'Commit hash')?.value || '';
-        const chainId = item.metadata.props.find((prop: any) => prop.label === 'EVM Chain ID')?.value || '';
+      const parsedData: ATQRegistryItem[] = result.data.litems.map((item) => {
+        const url = item.metadata.props.find((prop) => prop.label === 'Github Repository URL')?.value || '';
+        const commit = item.metadata.props.find((prop) => prop.label === 'Commit hash')?.value || '';
+        const chainId = item.metadata.props.find((prop) => prop.label === 'EVM Chain ID')?.value || '';
 
         return {
           itemID: item.itemID,
