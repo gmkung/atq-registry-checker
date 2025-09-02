@@ -1,26 +1,222 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600;700&display=swap');
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Kleros Purple Tron Theme */
+  --kleros-purple: #8B5CF6;
+  --kleros-purple-dark: #6D28D9;
+  --kleros-purple-light: #A78BFA;
+  --kleros-cyan: #06B6D4;
+  --kleros-cyan-dark: #0891B2;
+  --kleros-pink: #EC4899;
+  --kleros-pink-dark: #DB2777;
+  
+  /* Background gradients */
+  --bg-primary: #0A0A0F;
+  --bg-secondary: #1A1A2E;
+  --bg-tertiary: #16213E;
+  --bg-card: rgba(26, 26, 46, 0.8);
+  --bg-glass: rgba(139, 92, 246, 0.1);
+  
+  /* Text colors */
+  --text-primary: #FFFFFF;
+  --text-secondary: #E2E8F0;
+  --text-muted: #94A3B8;
+  --text-accent: #8B5CF6;
+  
+  /* Neon effects */
+  --neon-purple: 0 0 20px #8B5CF6, 0 0 40px #8B5CF6, 0 0 60px #8B5CF6;
+  --neon-cyan: 0 0 20px #06B6D4, 0 0 40px #06B6D4, 0 0 60px #06B6D4;
+  --neon-pink: 0 0 20px #EC4899, 0 0 40px #EC4899, 0 0 60px #EC4899;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--bg-primary);
+  --color-foreground: var(--text-primary);
+  --font-sans: 'Exo 2', system-ui, sans-serif;
+  --font-mono: 'Orbitron', monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-tertiary) 100%);
+  background-attachment: fixed;
+  color: var(--text-primary);
+  font-family: 'Exo 2', system-ui, sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Animated background grid */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(rgba(139, 92, 246, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(139, 92, 246, 0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: grid-move 20s linear infinite;
+  pointer-events: none;
+  z-index: -1;
+}
+
+@keyframes grid-move {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(50px, 50px); }
+}
+
+/* Neon glow animations */
+@keyframes neon-pulse {
+  0%, 100% { 
+    box-shadow: var(--neon-purple);
+    opacity: 1;
+  }
+  50% { 
+    box-shadow: var(--neon-purple), 0 0 80px #8B5CF6;
+    opacity: 0.8;
+  }
+}
+
+@keyframes neon-cyan-pulse {
+  0%, 100% { 
+    box-shadow: var(--neon-cyan);
+    opacity: 1;
+  }
+  50% { 
+    box-shadow: var(--neon-cyan), 0 0 80px #06B6D4;
+    opacity: 0.8;
+  }
+}
+
+@keyframes neon-pink-pulse {
+  0%, 100% { 
+    box-shadow: var(--neon-pink);
+    opacity: 1;
+  }
+  50% { 
+    box-shadow: var(--neon-pink), 0 0 80px #EC4899;
+    opacity: 0.8;
+  }
+}
+
+/* Glass morphism effect */
+.glass {
+  background: var(--bg-glass);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  border-radius: 12px;
+}
+
+/* Clean button styles */
+.neon-button {
+  background: var(--kleros-purple);
+  border: 2px solid var(--kleros-purple);
+  color: var(--text-primary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.neon-button:hover {
+  background: var(--kleros-purple-dark);
+  border-color: var(--kleros-purple-light);
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+  transform: translateY(-1px);
+}
+
+.neon-button:active {
+  transform: translateY(0);
+  background: var(--kleros-purple-dark);
+}
+
+/* Table styling */
+.neon-table {
+  background: var(--bg-card);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.neon-table th {
+  background: var(--kleros-purple-dark);
+  color: var(--text-primary);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 2px solid var(--kleros-purple);
+}
+
+.neon-table td {
+  border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+  transition: background-color 0.3s ease;
+}
+
+.neon-table tr:hover td {
+  background: rgba(139, 92, 246, 0.1);
+}
+
+/* Loading spinner */
+.neon-spinner {
+  border: 3px solid rgba(139, 92, 246, 0.3);
+  border-top: 3px solid var(--kleros-purple);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  box-shadow: var(--neon-purple);
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Modal styling */
+.neon-modal {
+  background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  border: 2px solid var(--kleros-purple);
+  border-radius: 16px;
+  box-shadow: var(--neon-purple);
+}
+
+/* Link styling */
+.neon-link {
+  color: var(--kleros-cyan);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.neon-link::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -2px;
+  left: 0;
+  background: var(--kleros-cyan);
+  transition: width 0.3s ease;
+  box-shadow: 0 0 10px var(--kleros-cyan);
+}
+
+.neon-link:hover::after {
+  width: 100%;
+}
+
+.neon-link:hover {
+  color: var(--kleros-cyan-light);
+  text-shadow: 0 0 10px var(--kleros-cyan);
 }
