@@ -24,12 +24,59 @@ export default function Home() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/atq-registry');
+      
+      // Use The Graph's decentralized endpoint with API key for better performance
+      const apiKey = '96946e4d39db402bfbec6cb240fd1a83';
+      const apiEndpoint = `https://gateway.thegraph.com/api/${apiKey}/subgraphs/id/9hHo5MpjpC1JqfD3BsgFnojGurXRHTrHWcUcZPPCo6m8`;
+      
+      const query = {
+        query: `{
+          litems(first: 1000, skip: 0, orderBy: latestRequestSubmissionTime, where: {status: Registered, registryAddress: "0xae6aaed5434244be3699c56e7ebc828194f26dc3"}) {
+            itemID
+            metadata {
+              props {
+                type
+                label
+                value
+              }
+            }
+          }
+        }`
+      };
+
+      const response = await fetch(apiEndpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(query),
+      });
+
       if (!response.ok) {
-        throw new Error('Failed to fetch data');
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
+
       const result = await response.json();
-      setData(result);
+
+      if (result.errors) {
+        throw new Error(`GraphQL errors: ${result.errors.map((e: any) => e.message).join(', ')}`);
+      }
+
+      // Parse the response to extract the required fields
+      const parsedData: ATQRegistryItem[] = result.data.litems.map((item: any) => {
+        const url = item.metadata.props.find((prop: any) => prop.label === 'Github Repository URL')?.value || '';
+        const commit = item.metadata.props.find((prop: any) => prop.label === 'Commit hash')?.value || '';
+        const chainId = item.metadata.props.find((prop: any) => prop.label === 'EVM Chain ID')?.value || '';
+
+        return {
+          itemID: item.itemID,
+          url,
+          commit,
+          chainId
+        };
+      });
+
+      setData(parsedData);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -88,6 +135,7 @@ Focus on the key requirements from the policy:
 - Correct returnTags function signature
 - GraphQL query implementation
 - Error handling
+- When checking the endpoints, the Arbitrum gateways are acceptable, focus on checking whether the deployment specific endpoints are used instead of subgraph ID specific ones
 - Package.json and tsconfig.json compliance`;
   };
 
